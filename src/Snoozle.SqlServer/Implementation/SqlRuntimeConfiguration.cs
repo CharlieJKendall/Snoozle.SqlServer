@@ -13,7 +13,8 @@ namespace Snoozle.SqlServer.Implementation
             ISqlResourceConfiguration resourceConfiguration,
             Func<IDatabaseResultReader, TResource> getSqlMapToResource,
             Func<object, IDatabaseCommandParameter> getPrimaryKeySqlParameter,
-            Func<object, List<IDatabaseCommandParameter>> getNonPrimaryKeySqlParameters,
+            Func<object, List<IDatabaseCommandParameter>> getSqlParametersForCreationFunc,
+            Func<object, List<IDatabaseCommandParameter>> getSqlParametersForUpdatingFunc,
             string selectAll,
             string selectById,
             string deleteById,
@@ -23,7 +24,8 @@ namespace Snoozle.SqlServer.Implementation
         {
             GetSqlMapToResource = getSqlMapToResource;
             GetPrimaryKeySqlParameter = getPrimaryKeySqlParameter;
-            GetNonPrimaryKeySqlParameters = getNonPrimaryKeySqlParameters;
+            GetSqlParametersForCreation = getSqlParametersForCreationFunc;
+            GetSqlParametersForUpdating = getSqlParametersForUpdatingFunc;
             SelectAll = selectAll;
             SelectById = selectById;
             DeleteById = deleteById;
@@ -33,7 +35,8 @@ namespace Snoozle.SqlServer.Implementation
 
         public Func<IDatabaseResultReader, TResource> GetSqlMapToResource { get; }
         public Func<object, IDatabaseCommandParameter> GetPrimaryKeySqlParameter { get; }
-        public Func<object, List<IDatabaseCommandParameter>> GetNonPrimaryKeySqlParameters { get; }
+        public Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForCreation { get; }
+        public Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForUpdating { get; }
         public string SelectAll { get; }
         public string SelectById { get; }
         public string DeleteById { get; }

@@ -10,7 +10,8 @@ namespace Snoozle.SqlServer.Implementation
     {
         Func<IDatabaseResultReader, TResource> GetSqlMapToResource { get; }
         Func<object, IDatabaseCommandParameter> GetPrimaryKeySqlParameter { get; }
-        Func<object, List<IDatabaseCommandParameter>> GetNonPrimaryKeySqlParameters { get; }
+        Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForCreation { get; }
+        Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForUpdating { get; }
 
         string SelectAll { get; }
         string SelectById { get; }

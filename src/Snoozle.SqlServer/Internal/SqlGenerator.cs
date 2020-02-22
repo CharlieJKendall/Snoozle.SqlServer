@@ -107,7 +107,10 @@ namespace Snoozle.SqlServer.Internal
 
         public string Update(ISqlResourceConfiguration config)
         {
-            ISqlPropertyConfiguration[] properties = config.PropertyConfigurationsForWrite.ToArray();
+            ISqlPropertyConfiguration[] properties = config.PropertyConfigurationsForWrite
+                .Where(x => x.ValueComputationFunc == null || (x.ValueComputationFunc?.EndpointTriggers & HttpVerb.PUT) == HttpVerb.PUT)
+                .ToArray();
+
             StringBuilder stringBuilder = new StringBuilder("UPDATE [");
             stringBuilder.Append(config.ModelConfiguration.TableName);
             stringBuilder.Append("] SET ");

@@ -38,7 +38,7 @@ namespace Snoozle.SqlServer.Implementation
 
             return _sqlExecutor.ExecuteInsertAsync(
                 config.Insert,
-                config.GetNonPrimaryKeySqlParameters,
+                config.GetSqlParametersForCreation,
                 config.GetSqlMapToResource,
                 resourceToCreate);
         }
@@ -72,17 +72,18 @@ namespace Snoozle.SqlServer.Implementation
             }
         }
 
-        public Task<TResource> UpdateAsync<TResource>(TResource resourceToCreate, object primaryKey)
+        public Task<TResource> UpdateAsync<TResource>(TResource resourceToUpdate, object primaryKey)
             where TResource : class, IRestResource
         {
             var config = GetConfig<TResource>();
 
             return _sqlExecutor.ExecuteUpdateAsync(
                 config.UpdateById,
-                config.GetNonPrimaryKeySqlParameters,
+                config.GetSqlParametersForUpdating,
                 config.GetPrimaryKeySqlParameter,
                 config.GetSqlMapToResource,
-                resourceToCreate,primaryKey);
+                resourceToUpdate,
+                primaryKey);
         }
 
         private ISqlRuntimeConfiguration<TResource> GetConfig<TResource>()

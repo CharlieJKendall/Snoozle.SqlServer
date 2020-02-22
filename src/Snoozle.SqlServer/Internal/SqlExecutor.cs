@@ -126,7 +126,7 @@ namespace Snoozle.SqlServer.Internal
             Func<object, List<IDatabaseCommandParameter>> paramProvider,
             Func<object, IDatabaseCommandParameter> primaryKeyParamProvider,
             Func<IDatabaseResultReader, T> mappingFunc,
-            T resourceToCreate,
+            T resourceToUpdate,
             object primaryKey)
             where T : class, IRestResource
         {
@@ -135,7 +135,7 @@ namespace Snoozle.SqlServer.Internal
                 using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
                 using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
                 {
-                    command.AddParameters(paramProvider(resourceToCreate));
+                    command.AddParameters(paramProvider(resourceToUpdate));
                     command.AddParameter(primaryKeyParamProvider(primaryKey));
 
                     await connection.OpenAsync().ConfigureAwait(false);

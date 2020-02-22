@@ -67,14 +67,16 @@ namespace Snoozle.SqlServer
                     .Invoke(sqlExpressionBuilder, new[] { configuration }) as Func<IDatabaseResultReader, IRestResource>;
 
                 var getPrimaryKeySqlParameterFunc = sqlExpressionBuilder.GetPrimaryKeySqlParameter(configuration.PrimaryIdentifier);
-                var getNonPrimaryKeySqlParametersFunc = sqlExpressionBuilder.GetNonPrimaryKeySqlParameters(configuration);
+                var getSqlParametersForCreationFunc = sqlExpressionBuilder.GetSqlParametersForCreation(configuration);
+                var getSqlParametersForUpdatingFunc = sqlExpressionBuilder.GetSqlParametersForUpdating(configuration);
 
                 var runtimeConfiguration = Activator.CreateInstance(
                     typeof(SqlRuntimeConfiguration<>).MakeGenericType(configuration.ResourceType),
                     configuration,
                     createObjectRelationalMapFunc,
                     getPrimaryKeySqlParameterFunc,
-                    getNonPrimaryKeySqlParametersFunc,
+                    getSqlParametersForCreationFunc,
+                    getSqlParametersForUpdatingFunc,
                     selectAll,
                     selectById,
                     deleteById,

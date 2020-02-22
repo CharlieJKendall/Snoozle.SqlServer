@@ -24,14 +24,20 @@ namespace Snoozle.SqlServer.Internal
             return GetSqlParameter(primaryIdentifierConfig, _sqlParamaterProvider.GetPrimaryKeyParameterName(), false).Compile();
         }
 
-        public Func<object, List<IDatabaseCommandParameter>> GetNonPrimaryKeySqlParameters(ISqlResourceConfiguration config)
+        public Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForCreation(ISqlResourceConfiguration config)
         {
             ISqlPropertyConfiguration[] configs = config.PropertyConfigurationsForWrite.ToArray();
+            return GetSqlParameters(config, configs);
+        }
 
+        private Func<object, List<IDatabaseCommandParameter>> GetSqlParameters(
+            ISqlResourceConfiguration resourceConfig,
+            ISqlPropertyConfiguration[] propertyConfigs)
+        {
             var paramResource = Expression.Parameter(typeof(object), "resourceObject");
-            var typedParam = Expression.Convert(paramResource, config.ResourceType);
+            var typedParam = Expression.Convert(paramResource, resourceConfig.ResourceType);
             var result = Expression.Variable(typeof(List<IDatabaseCommandParameter>), "databaseCommandParameter");
-            var typedParamVar = Expression.Variable(config.ResourceType, "typedParam");
+            var typedParamVar = Expression.Variable(resourceConfig.ResourceType, "typedParam");
             var assignTypedParamVar = Expression.Assign(typedParamVar, typedParam);
             var instantiateResultObj = Expression.Assign(result, Expression.New(typeof(List<IDatabaseCommandParameter>)));
 
@@ -41,10 +47,10 @@ namespace Snoozle.SqlServer.Internal
                 instantiateResultObj
             };
 
-            for (int i = 0; i < configs.Length; i++)
+            for (int i = 0; i < propertyConfigs.Length; i++)
             {
-                var property = Expression.Property(typedParamVar, configs[i].PropertyName);
-                var sqlParam = GetSqlParameter(configs[i], _sqlParamaterProvider.GenerateParameterName(configs[i].PropertyName));
+                var property = Expression.Property(typedParamVar, propertyConfigs[i].PropertyName);
+                var sqlParam = GetSqlParameter(propertyConfigs[i], _sqlParamaterProvider.GenerateParameterName(propertyConfigs[i].PropertyName));
                 var getSqlParam = Expression.Invoke(sqlParam, Expression.Convert(property, typeof(object)));
                 var generateNameAndAddToList = Expression.Call(
                     result,
@@ -163,6 +169,17 @@ namespace Snoozle.SqlServer.Internal
             {
                 return Expression.Call(dataReaderInstance, dataReaderMethodName, null, dataIndex);
             }
+        }
+
+        public Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForUpdating(ISqlResourceConfiguration config)
+        {
+            // Get configs that either do not have a computed value, or their computed value is allowed for PUT. If the computation is
+            // not allowed for PUT, then we don't want to try and update the data
+            ISqlPropertyConfiguration[] configs = config.PropertyConfigurationsForWrite
+                .Where(x => x.ValueComputationFunc == null || (x.ValueComputationFunc?.EndpointTriggers & HttpVerb.PUT) == HttpVerb.PUT)
+            .ToArray();
+
+            return GetSqlParameters(config, configs);
         }
     }
 }

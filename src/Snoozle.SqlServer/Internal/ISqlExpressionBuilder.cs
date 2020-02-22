@@ -12,6 +12,8 @@ namespace Snoozle.SqlServer.Internal
         Func<IDatabaseResultReader, T> CreateObjectRelationalMap<T>(ISqlResourceConfiguration config)
             where T : class, IRestResource;
 
-        Func<object, List<IDatabaseCommandParameter>> GetNonPrimaryKeySqlParameters(ISqlResourceConfiguration config);
+        Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForCreation(ISqlResourceConfiguration config);
+
+        Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForUpdating(ISqlResourceConfiguration config);
     }
 }
