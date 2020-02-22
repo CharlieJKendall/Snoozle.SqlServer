@@ -20,11 +20,11 @@ namespace Snoozle.TestHarness.RestResources
     {
         public override void Configure()
         {
-            ConfigurationForModel().HasTableName("Cats").HasAllowedHttpVerbs(HttpVerb.All).HasRoute("cattyboys");
+            ConfigurationForModel().HasTableName("Cats").HasAllowedHttpVerbs(HttpVerbs.All).HasRoute("cattyboys");
 
             ConfigurationForProperty(x => x.HairLength).HasColumnName("HairLengthInMeters");
             ConfigurationForProperty(x => x.Id).HasColumnName("CatId").IsPrimaryIdentifier();
-            ConfigurationForProperty(x => x.DateCreated).HasComputedValue().DateTimeNow(HttpVerb.POST);
+            ConfigurationForProperty(x => x.DateCreated).HasComputedValue().DateTimeNow(HttpVerbs.POST);
             ConfigurationForProperty(x => x.Name).HasColumnName("WrongColumnName");
             ConfigurationForProperty(x => x.Name).HasColumnName("CatName").HasComputedValue().Custom(() => "GARY");
         }
