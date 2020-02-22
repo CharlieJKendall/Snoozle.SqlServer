@@ -1,6 +1,10 @@
 # SQL Server Data Provider for Snoozle
 
-### Have a fully functioning REST API running in minutes by following three simple steps!
+[![Build Status](https://dev.azure.com/charliejkendall/Snoozle/_apis/build/status/CharlieJKendall.Snoozle.SqlServer?branchName=master)](https://dev.azure.com/charliejkendall/Snoozle/_build/latest?definitionId=2&branchName=master)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Snoozle.SqlServer)](https://www.nuget.org/packages/Snoozle.SqlServer)
+[![Latest Release](https://img.shields.io/github/v/release/charliejkendall/snoozle.sqlserver)](https://github.com/CharlieJKendall/Snoozle.SqlServer/releases/latest)
+
+### Have a fully functioning and lightning fast REST API running in minutes by following three simple steps!
 
 #### 1. Call the `.AddSnoozleSqlServer()` extension method from the `IMvcBuilder` in Startup.cs
 
