@@ -148,7 +148,12 @@ namespace Snoozle.SqlServer.Internal
             }
         }
 
-        private Expression GetMethodCallWithCast(bool shouldCastToPropertyType, Expression dataReaderInstance, string dataReaderMethodName, Expression dataIndex, MemberExpression property)
+        private static Expression GetMethodCallWithCast(
+            bool shouldCastToPropertyType,
+            Expression dataReaderInstance,
+            string dataReaderMethodName,
+            Expression dataIndex,
+            MemberExpression property)
         {
             if (shouldCastToPropertyType)
             {
@@ -160,5 +165,4 @@ namespace Snoozle.SqlServer.Internal
             }
         }
     }
-
 }

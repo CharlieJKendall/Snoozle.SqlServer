@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,16 @@ namespace Snoozle.SqlServer.Internal.Wrappers
 
         public void Dispose()
         {
-            _sqlCommand?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _sqlCommand?.Dispose();
+            }
         }
 
         public Task<int> ExecuteNonQueryAsync()
@@ -26,7 +36,7 @@ namespace Snoozle.SqlServer.Internal.Wrappers
 
         public async Task<IDatabaseResultReader> ExecuteReaderAsync()
         {
-            return new DatabaseResultReader(await _sqlCommand.ExecuteReaderAsync());
+            return new DatabaseResultReader(await _sqlCommand.ExecuteReaderAsync().ConfigureAwait(false));
         }
 
         public void AddParameter(IDatabaseCommandParameter databaseCommandParameter)

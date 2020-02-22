@@ -95,7 +95,16 @@ namespace Snoozle.SqlServer.Internal.Wrappers
 
         public void Dispose()
         {
-            SqlDataReader?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                SqlDataReader?.Dispose();
+            }
         }
     }
 }

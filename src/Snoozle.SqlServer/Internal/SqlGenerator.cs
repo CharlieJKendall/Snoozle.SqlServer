@@ -26,7 +26,7 @@ namespace Snoozle.SqlServer.Internal
                 .ToString();
         }
 
-        private StringBuilder SelectAllBuilder(ISqlResourceConfiguration config)
+        private static StringBuilder SelectAllBuilder(ISqlResourceConfiguration config)
         {
             StringBuilder stringBuilder = new StringBuilder("SELECT ");
             ISqlPropertyConfiguration[] properties = config.PropertyConfigurationsForRead.ToArray();

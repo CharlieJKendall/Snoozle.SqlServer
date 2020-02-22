@@ -24,13 +24,13 @@ namespace Snoozle.SqlServer.Internal
             using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
             using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
             {
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
 
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync())
+                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                 {
                     List<T> results = new List<T>();
 
-                    while (await reader.ReadAsync())
+                    while (await reader.ReadAsync().ConfigureAwait(false))
                     {
                         results.Add(mappingFunc(reader));
                     }
@@ -52,11 +52,11 @@ namespace Snoozle.SqlServer.Internal
             {
                 command.AddParameter(paramProvider(primaryKey));
 
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
 
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync())
+                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                 {
-                    return await reader.ReadAsync() ? mappingFunc(reader) : default;
+                    return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
                 }
             }
         }
@@ -71,9 +71,9 @@ namespace Snoozle.SqlServer.Internal
             {
                 command.AddParameter(paramProvider(primaryKey));
 
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
 
-                int numberOfRowsDeleted = await command.ExecuteNonQueryAsync();
+                int numberOfRowsDeleted = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
 
                 return numberOfRowsDeleted != 0;
             }
@@ -91,11 +91,11 @@ namespace Snoozle.SqlServer.Internal
             {
                 command.AddParameters(paramProvider(resourceToCreate));
 
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
 
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync())
+                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                 {
-                    return await reader.ReadAsync() ? mappingFunc(reader) : default;
+                    return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
                 }
             }
         }
@@ -115,11 +115,11 @@ namespace Snoozle.SqlServer.Internal
                 command.AddParameters(paramProvider(resourceToCreate));
                 command.AddParameter(primaryKeyParamProvider(primaryKey));
 
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
 
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync())
+                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                 {
-                    return await reader.ReadAsync() ? mappingFunc(reader) : default;
+                    return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
                 }
             }
         }
