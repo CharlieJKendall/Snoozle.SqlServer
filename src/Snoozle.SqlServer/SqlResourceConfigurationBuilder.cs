@@ -10,7 +10,7 @@ namespace Snoozle.SqlServer
     public abstract class SqlResourceConfigurationBuilder<TResource> : BaseResourceConfigurationBuilder<TResource, ISqlPropertyConfiguration, ISqlResourceConfiguration, ISqlModelConfiguration>
         where TResource : class, IRestResource
     {
-        private readonly Dictionary<Type, SqlDbType?> _defaultSqlDbTypeMap = new Dictionary<Type, SqlDbType?>
+        private static readonly Dictionary<Type, SqlDbType?> _defaultSqlDbTypeMap = new Dictionary<Type, SqlDbType?>
         {
             { typeof(long), SqlDbType.BigInt },
             { typeof(byte[]), SqlDbType.VarBinary },

@@ -21,22 +21,29 @@ namespace Snoozle.SqlServer.Internal
         public async Task<IEnumerable<T>> ExecuteSelectAllAsync<T>(string sql, Func<IDatabaseResultReader, T> mappingFunc)
             where T : class, IRestResource
         {
-            using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
-            using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
+            try
             {
-                await connection.OpenAsync().ConfigureAwait(false);
-
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
+                using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
                 {
-                    List<T> results = new List<T>();
+                    await connection.OpenAsync().ConfigureAwait(false);
 
-                    while (await reader.ReadAsync().ConfigureAwait(false))
+                    using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
                     {
-                        results.Add(mappingFunc(reader));
-                    }
+                        List<T> results = new List<T>();
 
-                    return results;
+                        while (await reader.ReadAsync().ConfigureAwait(false))
+                        {
+                            results.Add(mappingFunc(reader));
+                        }
+
+                        return results;
+                    }
                 }
+            }
+            catch (InvalidCastException ex)
+            {
+                throw InvalidConfigurationException.DataTypeMismatch(typeof(T).Name, ex);
             }
         }
 
@@ -47,17 +54,24 @@ namespace Snoozle.SqlServer.Internal
             object primaryKey)
             where T : class, IRestResource
         {
-            using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
-            using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
+            try
             {
-                command.AddParameter(paramProvider(primaryKey));
-
-                await connection.OpenAsync().ConfigureAwait(false);
-
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
+                using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
                 {
-                    return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
+                    command.AddParameter(paramProvider(primaryKey));
+
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                    {
+                        return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
+                    }
                 }
+            }
+            catch (InvalidCastException ex)
+            {
+                throw InvalidConfigurationException.DataTypeMismatch(typeof(T).Name, ex);
             }
         }
 
@@ -86,17 +100,24 @@ namespace Snoozle.SqlServer.Internal
             T resourceToCreate)
             where T : class, IRestResource
         {
-            using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
-            using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
+            try
             {
-                command.AddParameters(paramProvider(resourceToCreate));
-
-                await connection.OpenAsync().ConfigureAwait(false);
-
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
+                using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
                 {
-                    return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
+                    command.AddParameters(paramProvider(resourceToCreate));
+
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                    {
+                        return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
+                    }
                 }
+            }
+            catch (InvalidCastException ex)
+            {
+                throw InvalidConfigurationException.DataTypeMismatch(typeof(T).Name, ex);
             }
         }
 
@@ -109,18 +130,25 @@ namespace Snoozle.SqlServer.Internal
             object primaryKey)
             where T : class, IRestResource
         {
-            using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
-            using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
+            try
             {
-                command.AddParameters(paramProvider(resourceToCreate));
-                command.AddParameter(primaryKeyParamProvider(primaryKey));
-
-                await connection.OpenAsync().ConfigureAwait(false);
-
-                using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                using (IDatabaseConnection connection = _sqlClassProvider.CreateSqlConnection(_connectionString))
+                using (IDatabaseCommand command = _sqlClassProvider.CreateSqlCommand(sql, connection))
                 {
-                    return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
+                    command.AddParameters(paramProvider(resourceToCreate));
+                    command.AddParameter(primaryKeyParamProvider(primaryKey));
+
+                    await connection.OpenAsync().ConfigureAwait(false);
+
+                    using (IDatabaseResultReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false))
+                    {
+                        return await reader.ReadAsync().ConfigureAwait(false) ? mappingFunc(reader) : default;
+                    }
                 }
+            }
+            catch (InvalidCastException ex)
+            {
+                throw InvalidConfigurationException.DataTypeMismatch(typeof(T).Name, ex);
             }
         }
     }

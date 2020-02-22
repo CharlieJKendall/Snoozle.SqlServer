@@ -7,7 +7,7 @@ namespace Snoozle.TestHarness.RestResources
     {
         public int Id { get; set; }
 
-        public Test? HairLength { get; set; }
+        public int? HairLength { get; set; }
 
         public string Name { get; set; }
 
