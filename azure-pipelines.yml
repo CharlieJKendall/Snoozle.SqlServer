@@ -1,0 +1,91 @@
+trigger:
+- master
+- release/*
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  snoozleProject: '**/Snoozle.SqlServer.csproj'
+  isRelease: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')]
+  version: '0.0.0'
+
+steps:
+- task: PowerShell@2
+  displayName: 'Set build version variable'
+  name: version
+  condition: and(succeeded(), eq(variables['isRelease'], 'True'))
+  inputs:
+    filePath: './set-version.ps1'
+
+- task: Assembly-Info-NetCore@2
+  displayName: 'Update .csproj file versions'
+  condition: and(succeeded(), eq(variables['isRelease'], 'True'))
+  inputs:
+    Path: '$(Build.SourcesDirectory)'
+    FileNames: '**/*.csproj'
+    InsertAttributes: false
+    FileEncoding: 'auto'
+    WriteBOM: false
+    PackageRequireLicenseAcceptance: true
+    VersionNumber: $(Version)
+    FileVersionNumber: $(Version)
+    InformationalVersion: $(Version)
+    PackageVersion: $(Version)
+    LogLevel: 'verbose'
+    FailOnWarning: false
+    DisableTelemetry: false
+    
+- task: NuGetToolInstaller@1
+  displayName: 'Install NuGet.exe'
+
+- task: NuGetCommand@2
+  displayName: 'Restore solution NuGet packages'
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(solution)'
+    nugetConfigPath: '$(System.DefaultWorkingDirectory)/src/NuGet.config'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build solution'
+  inputs:
+    command: 'build'
+    projects: '**/*.sln'
+    arguments: '--configuration $(buildConfiguration)'
+    
+- task: DotNetCoreCLI@2
+  displayName: 'Run unit tests'
+  inputs:
+    command: test
+    projects: '**/*Tests.csproj'
+    publishTestResults: true
+
+- task: DotNetCoreCLI@2
+  displayName: 'Pack NuGet package'
+  condition: and(succeeded(), eq(variables['isRelease'], 'True'))
+  inputs:
+    command: 'pack'
+    packagesToPack: '$(snoozleProject)'
+    versioningScheme: byEnvVar
+    versionEnvVar: Version
+
+- task: NuGetCommand@2
+  displayName: 'Push NuGet package'
+  condition: and(succeeded(), eq(variables['isRelease'], 'True'))
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGet'
+
+- task: GithubRelease@0
+  displayName: 'Create GitHub Release'
+  condition: and(succeeded(), eq(variables['isRelease'], 'True'))
+  inputs:
+    gitHubConnection: CharlieJKendallPAT
+    repositoryName: CharlieJKendall/Snoozle.SqlServer
+    tagSource: manual
+    tag: $(Version)
