@@ -4,7 +4,15 @@
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Snoozle.SqlServer)](https://www.nuget.org/packages/Snoozle.SqlServer)
 [![Latest Release](https://img.shields.io/github/v/release/charliejkendall/snoozle.sqlserver)](https://github.com/CharlieJKendall/Snoozle.SqlServer/releases/latest)
 
-### Have a fully functioning and lightning fast REST API running in minutes by following three simple steps!
+### Installation
+
+The package can be downloaded directly from the [NuGet Gallery | Snoozle.SqlServer](https://www.nuget.org/packages/Snoozle.SqlServer) or installed using the Visual Studio package manager UI/console.
+
+``` ps1
+PM> Install-Package Snoozle.SqlServer
+```
+
+### Quickstart Guide
 
 #### 1. Call the `.AddSnoozleSqlServer()` extension method from the `IMvcBuilder` in Startup.cs
 
@@ -23,7 +31,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-#### 2. Create a POCO model representing your SQL data schema
+#### 2. Create a model class representing your SQL data schema
 
 This *must* inherit from the `IRestResource` marker interface. Nullable columns that are modelled by value types (e.g `int`, `long`, `DateTime`) should be nullable on the model.
 
