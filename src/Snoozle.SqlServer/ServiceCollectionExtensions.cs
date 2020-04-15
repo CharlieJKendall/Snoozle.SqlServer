@@ -12,29 +12,43 @@ namespace Snoozle.SqlServer
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Add Snoozle with a SQL Server data provider to your application. Default configuration values are taken.
+        /// </summary>
+        public static IMvcBuilder AddSnoozleSqlServer(this IMvcBuilder @this)
+        {
+            return AddSnoozleSqlServer(@this, options => { });
+        }
+
+        /// <summary>
+        /// Add Snoozle with a SQL Server data provider to your application.
+        /// </summary>
         public static IMvcBuilder AddSnoozleSqlServer(this IMvcBuilder @this, IConfigurationSection configurationSection)
         {
             @this.Services.Configure<SnoozleSqlServerOptions>(options => configurationSection.Bind(options));
 
             ISqlRuntimeConfigurationProvider runtimeConfigurationProvider = BuildRuntimeConfigurationProvider();
             @this.Services.AddSingleton(runtimeConfigurationProvider);
-            @this.AddSnoozleSqlServer();
+            @this.AddSnoozleSqlServerCore();
 
             return @this.AddSnoozleCore(runtimeConfigurationProvider, configurationSection);
         }
 
+        /// <summary>
+        /// Add Snoozle with a SQL Server data provider to your application.
+        /// </summary>
         public static IMvcBuilder AddSnoozleSqlServer(this IMvcBuilder @this, Action<SnoozleSqlServerOptions> optionsBuilder)
         {
             @this.Services.Configure(optionsBuilder);            
 
             ISqlRuntimeConfigurationProvider runtimeConfigurationProvider = BuildRuntimeConfigurationProvider();
             @this.Services.AddSingleton(runtimeConfigurationProvider);
-            @this.AddSnoozleSqlServer();
+            @this.AddSnoozleSqlServerCore();
 
             return @this.AddSnoozleCore(runtimeConfigurationProvider, optionsBuilder);
         }
 
-        private static IMvcBuilder AddSnoozleSqlServer(this IMvcBuilder @this)
+        private static IMvcBuilder AddSnoozleSqlServerCore(this IMvcBuilder @this)
         {
             IServiceCollection serviceCollection = @this.Services;
 
