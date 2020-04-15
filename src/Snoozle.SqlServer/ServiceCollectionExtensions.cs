@@ -16,28 +16,32 @@ namespace Snoozle.SqlServer
         {
             @this.Services.Configure<SnoozleSqlServerOptions>(options => configurationSection.Bind(options));
 
-            return AddSnoozleSqlServer(@this);
+            ISqlRuntimeConfigurationProvider runtimeConfigurationProvider = BuildRuntimeConfigurationProvider();
+            @this.Services.AddSingleton(runtimeConfigurationProvider);
+            @this.AddSnoozleSqlServer();
+
+            return @this.AddSnoozleCore(runtimeConfigurationProvider, configurationSection);
         }
 
         public static IMvcBuilder AddSnoozleSqlServer(this IMvcBuilder @this, Action<SnoozleSqlServerOptions> optionsBuilder)
         {
-            @this.Services.Configure(optionsBuilder);
+            @this.Services.Configure(optionsBuilder);            
 
-            return AddSnoozleSqlServer(@this);
+            ISqlRuntimeConfigurationProvider runtimeConfigurationProvider = BuildRuntimeConfigurationProvider();
+            @this.Services.AddSingleton(runtimeConfigurationProvider);
+            @this.AddSnoozleSqlServer();
+
+            return @this.AddSnoozleCore(runtimeConfigurationProvider, optionsBuilder);
         }
 
         private static IMvcBuilder AddSnoozleSqlServer(this IMvcBuilder @this)
         {
             IServiceCollection serviceCollection = @this.Services;
-            ISqlRuntimeConfigurationProvider runtimeConfigurationProvider = BuildRuntimeConfigurationProvider();
 
             serviceCollection.Configure<SnoozleSqlServerOptions>(options => new SnoozleSqlServerOptions());
             serviceCollection.AddScoped<ISqlExecutor, SqlExecutor>();
             serviceCollection.AddScoped<IDataProvider, SqlDataProvider>();
             serviceCollection.AddScoped<ISqlClassProvider, SqlClassProvider>();
-            serviceCollection.AddSingleton(runtimeConfigurationProvider);
-
-            @this.AddSnoozleCore(runtimeConfigurationProvider);
 
             return @this;
         }

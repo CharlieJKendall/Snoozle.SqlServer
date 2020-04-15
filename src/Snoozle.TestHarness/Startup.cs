@@ -28,10 +28,6 @@ namespace Snoozle.TestHarness
                     {
                         options.ConnectionString = "Server=.;Database=Snoozle;Trusted_Connection=True;";
                     });
-
-            services.AddSnoozle(options =>
-                {
-                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

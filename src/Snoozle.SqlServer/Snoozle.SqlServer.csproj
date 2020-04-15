@@ -26,7 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.0" />
-    <PackageReference Include="Snoozle" Version="0.1.0.56" />
+    <PackageReference Include="Snoozle" Version="0.2.0.99" />
   </ItemGroup>
 
 </Project>

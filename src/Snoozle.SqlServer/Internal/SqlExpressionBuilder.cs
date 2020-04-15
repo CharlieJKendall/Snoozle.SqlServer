@@ -26,7 +26,7 @@ namespace Snoozle.SqlServer.Internal
 
         public Func<object, List<IDatabaseCommandParameter>> GetSqlParametersForCreation(ISqlResourceConfiguration config)
         {
-            ISqlPropertyConfiguration[] configs = config.PropertyConfigurationsForWrite.ToArray();
+            ISqlPropertyConfiguration[] configs = config.PropertyConfigurationsForCreate.ToArray();
             return GetSqlParameters(config, configs);
         }
 
@@ -175,7 +175,7 @@ namespace Snoozle.SqlServer.Internal
         {
             // Get configs that either do not have a computed value, or their computed value is allowed for PUT. If the computation is
             // not allowed for PUT, then we don't want to try and update the data
-            ISqlPropertyConfiguration[] configs = config.PropertyConfigurationsForWrite
+            ISqlPropertyConfiguration[] configs = config.PropertyConfigurationsForUpdate
                 .Where(x => x.ValueComputationFunc == null || (x.ValueComputationFunc?.EndpointTriggers & HttpVerbs.PUT) == HttpVerbs.PUT)
             .ToArray();
 

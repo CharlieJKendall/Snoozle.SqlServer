@@ -67,7 +67,7 @@ namespace Snoozle.SqlServer.Internal
 
         public string Insert(ISqlResourceConfiguration config)
         {
-            ISqlPropertyConfiguration[] properties = config.PropertyConfigurationsForWrite.ToArray();
+            ISqlPropertyConfiguration[] properties = config.PropertyConfigurationsForCreate.ToArray();
             StringBuilder stringBuilder = new StringBuilder("INSERT INTO [");
             stringBuilder.Append(config.ModelConfiguration.TableName);
             stringBuilder.Append("] (");
@@ -107,7 +107,7 @@ namespace Snoozle.SqlServer.Internal
 
         public string Update(ISqlResourceConfiguration config)
         {
-            ISqlPropertyConfiguration[] properties = config.PropertyConfigurationsForWrite
+            ISqlPropertyConfiguration[] properties = config.PropertyConfigurationsForUpdate
                 .Where(x => x.ValueComputationFunc == null || (x.ValueComputationFunc?.EndpointTriggers & HttpVerbs.PUT) == HttpVerbs.PUT)
                 .ToArray();
 
